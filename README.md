@@ -24,3 +24,10 @@ results in:
 [S3ORAM] Combined, there are 8191 nodes, which is 2031368 rows of data.
 
 Last data set: 458149, 1015716, 235137, 5160, 3
+
+
+Dependencies:
+ntl==9.10.0
+libboost-all-dev==any
+ZeroMQ
+
