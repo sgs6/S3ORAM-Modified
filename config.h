@@ -38,9 +38,9 @@ static inline std::string to_string(T value)
 #define NTL_LIB //disable it if compiled for android
 //=== PARAMETERS ============================================================
 #define BLOCK_SIZE 40
-#define HEIGHT 9
-#define BUCKET_SIZE 200
-#define EVICT_RATE 100
+#define HEIGHT 12
+#define BUCKET_SIZE 248
+#define EVICT_RATE 124
 const int H = HEIGHT; 
 
 static const unsigned long long P = 1073742353; //prime field - should have length equal to the defined TYPE_DATA
