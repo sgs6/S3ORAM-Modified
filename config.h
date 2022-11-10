@@ -39,8 +39,8 @@ static inline std::string to_string(T value)
 //=== PARAMETERS ============================================================
 #define BLOCK_SIZE 40
 #define HEIGHT 12
-#define BUCKET_SIZE 256
-#define EVICT_RATE 128
+#define BUCKET_SIZE 255
+#define EVICT_RATE 126
 const int H = HEIGHT; 
 
 static const unsigned long long P = 1073742353; //prime field - should have length equal to the defined TYPE_DATA
