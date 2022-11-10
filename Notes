@@ -1,0 +1,3 @@
+Eviction rate dosnt seem like what we originally thought? 
+  - Whenever an "eviction" occurs, much more commands are sent to the servers than normal.
+  - Normal retrievals are much more fast than when an eviction occurs. It seems like the eviction rate refers to how many retrievals are required before this "eviction" occurs.
