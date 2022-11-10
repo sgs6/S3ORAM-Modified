@@ -4,6 +4,7 @@ Current max config as follows
 
 config.h: 
 
+
 #define BLOCK_SIZE 40
 
 #define HEIGHT 12
@@ -12,7 +13,10 @@ config.h:
 
 #define EVICT_RATE 124
 
+
 results in:
+
+
 [S3ORAM] There are 4094 non-leaf nodes, which is 1015312 rows of data.
 
 [S3ORAM] There are 4095 leaf nodes, which is 1015560 rows of data.
