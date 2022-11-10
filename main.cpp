@@ -107,6 +107,7 @@ int main(int argc, char **argv)
 			cin >> start;
 			cout << endl;
 			//Sequential Access
+			auto st = time_now;
 			for(int j = start; j <= NUM_BLOCK; j++)
 			{
 				cout << endl;
@@ -118,8 +119,12 @@ int main(int argc, char **argv)
 				cout << "=================================================================" << endl;
 				cout << "[main] Sequential Access for " << j << " IS COMPLETED!" <<endl;
 				cout << "=================================================================" << endl;
+				
 				if(j % (EVICT_RATE) == 0)
-				{
+				{	
+					auto en = time_now;
+					cout << std::chrono::duration_cast<std::chrono::milliseconds>(en-st).count() << " milliseconds to sequentially read evict rate blocks. \n\n";
+
 					cout << endl;
 					do
 					{
@@ -141,7 +146,7 @@ int main(int argc, char **argv)
 			cout << "HOW MANY RANDOM ACCESS?";
 			cin >> access;
 			
-
+			auto st = time_now;
 			for(int j = 1 ; j <= access; j++)
 			{
 				random_access = rand() % NUM_BLOCK + 1; 
@@ -157,7 +162,9 @@ int main(int argc, char **argv)
 				cout << "[main] Random Access for " << random_access << " IS COMPLETED!" <<endl;
 				cout << "=================================================================" << endl;
 			}
-			
+			auto en = time_now;
+			cout << std::chrono::duration_cast<std::chrono::milliseconds>(en-st).count() << " milliseconds to randomly querry entire database " << access << " times \n\n";
+
 
 			
 			cout << endl;
@@ -180,21 +187,18 @@ int main(int argc, char **argv)
 			cin >> querry;
 
 			cout << endl;
+			auto st = time_now;
 			cout << "=================================================================" << endl;
 			cout << "[main] Key Access for " << access << " IS STARTING!" <<endl;
 			cout << "=================================================================" << endl;
 
-			auto st = time_now;
 			client->accessQuerry(querry);
-			auto en = time_now;
-			cout << std::chrono::duration_cast<std::chrono::nanoseconds>(en-st).count() << " Nanoseconds to querry entire database\n\n";
-
+			
 			cout << "=================================================================" << endl;
 			cout << "[main] Key Access for " << access << " IS COMPLETED!" <<endl;
 			cout << "=================================================================" << endl;
-
-
-
+			auto en = time_now;
+			cout << std::chrono::duration_cast<std::chrono::milliseconds>(en-st).count() << " milliseconds to querry entire database for all instances of key " << querry << "\n\n";
 
 			cout << endl;
 			do
