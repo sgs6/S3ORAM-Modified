@@ -77,6 +77,7 @@ int S3ORAM::build(TYPE_POS_MAP* pos_map, TYPE_ID** metaData)
     int iterate = 0; // number of chunks (number of cells in csv)
     int counter = 0; // number of rows
     TYPE_DATA dataA[NUM_BLOCK],dataB[NUM_BLOCK],dataC[NUM_BLOCK],dataD[NUM_BLOCK];
+    //cout << NUM_BLOCK << endl;
     while (getline(inFile, myString)) {
         std::stringstream ss(myString);
         while(getline(ss, myString, ',')){
@@ -124,12 +125,12 @@ int S3ORAM::build(TYPE_POS_MAP* pos_map, TYPE_ID** metaData)
         memset(bucket[2],0,sizeof(TYPE_DATA)*BUCKET_SIZE);
         memset(bucket[3],0,sizeof(TYPE_DATA)*BUCKET_SIZE);
         memset(bucket[4],0,sizeof(TYPE_DATA)*BUCKET_SIZE);
-        for(int ii = BUCKET_SIZE/2 ; ii<BUCKET_SIZE; ii++)
+        for(int ii = 0 ; ii<BUCKET_SIZE; ii++)
         {
             if(iter>=NUM_BLOCK)
                 break;
             bucket[0][ii] = blockIDs[iter];
-            bucket[1][ii] = dataA[(int)iter];
+            bucket[1][ii] = dataA[(int)iter]; 
             bucket[2][ii] = dataB[(int)iter];
             bucket[3][ii] = dataC[(int)iter];
             bucket[4][ii] = dataD[(int)iter];
@@ -138,8 +139,14 @@ int S3ORAM::build(TYPE_POS_MAP* pos_map, TYPE_ID** metaData)
             metaData[i][ii]= blockIDs[iter];
             
             iter++;
+
+            if(i == NUM_NODES - 1 && ii == BUCKET_SIZE - 1){
+                cout << "Last data set: " << bucket[0][ii] << ", " << bucket[1][ii] << ", " << bucket[2][ii] << ", " << bucket[3][ii] << ", " << bucket[4][ii]<< endl;
+            }
             
         }
+        //cout << "[S3ORAM] The last accessable key for node " << i << " is " << bucket[0][BUCKET_SIZE-1]  << " at block id " << bucket[1][BUCKET_SIZE-1]  << endl;
+
         //write bucket to file
         file_out = NULL;
         path = clientDataDir + to_string(i);

@@ -38,9 +38,9 @@ static inline std::string to_string(T value)
 #define NTL_LIB //disable it if compiled for android
 //=== PARAMETERS ============================================================
 #define BLOCK_SIZE 40
-#define HEIGHT 12
-#define BUCKET_SIZE 255
-#define EVICT_RATE 126
+#define HEIGHT 9
+#define BUCKET_SIZE 200
+#define EVICT_RATE 100
 const int H = HEIGHT; 
 
 static const unsigned long long P = 1073742353; //prime field - should have length equal to the defined TYPE_DATA
@@ -119,7 +119,7 @@ typedef struct type_pos_map
 #define DATA_CHUNKS BLOCK_SIZE/sizeof(TYPE_DATA)
 const TYPE_INDEX PRECOMP_SIZE = BUCKET_SIZE*(2*HEIGHT+1)*BUCKET_SIZE*(2*HEIGHT+1);
 const TYPE_INDEX N_leaf = pow(2,H);
-const TYPE_INDEX NUM_BLOCK = ((int) (pow(2,HEIGHT-1))*EVICT_RATE-1);
+const TYPE_INDEX NUM_BLOCK = N_leaf * BUCKET_SIZE;
 const TYPE_INDEX NUM_NODES = (int) (pow(2,HEIGHT+1)-1);
 
 const TYPE_INDEX evictMatSize = 2*BUCKET_SIZE*BUCKET_SIZE;
