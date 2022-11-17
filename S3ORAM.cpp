@@ -60,7 +60,7 @@ int S3ORAM::build(TYPE_POS_MAP* pos_map, TYPE_ID** metaData)
     
     //generate bucket ID pools
     vector<TYPE_ID> blockIDs;
-    for(TYPE_ID i = 0; i <BUCKET_SIZE * NUM_NODES;i++)
+    for(TYPE_ID i = 0; i <NUM_BLOCK;i++)
     {
         blockIDs.push_back(i+1);
     }
@@ -77,7 +77,7 @@ int S3ORAM::build(TYPE_POS_MAP* pos_map, TYPE_ID** metaData)
     int iterate = 0; // number of chunks (number of cells in csv)
     int counter = 0; // number of rows
     int numData = BUCKET_SIZE * NUM_NODES;
-    TYPE_DATA dataA[numData],dataB[numData],dataC[numData],dataD[numData];
+    TYPE_DATA dataA[NUM_BLOCK],dataB[NUM_BLOCK],dataC[NUM_BLOCK],dataD[NUM_BLOCK];
     
     //cout << NUM_BLOCK << endl;
     while (getline(inFile, myString)) {
@@ -100,10 +100,10 @@ int S3ORAM::build(TYPE_POS_MAP* pos_map, TYPE_ID** metaData)
             if(iterate == 4){
                 iterate = 0;
                 counter++;
-                //cout << counter << " " << numData << endl;
+                //cout << counter << " " << NUM_BLOCK << endl;
             }
         }
-        if (counter >= numData) {
+        if (counter >= NUM_BLOCK) {
             //cout << "Something happened?" << endl;
             break;
         }
@@ -112,27 +112,27 @@ int S3ORAM::build(TYPE_POS_MAP* pos_map, TYPE_ID** metaData)
     
     //non-leaf buckets are all empty
     cout << "[S3ORAM] There are " << (NUM_NODES/2) - 1 << " non-leaf nodes, which is " << ((NUM_NODES/2)-1)*BUCKET_SIZE << " rows of data.\n";
-    //for(TYPE_INDEX i = 0 ; i < NUM_NODES/2; i ++)
-    //{
-    //    file_out = NULL;
-    //    path = clientDataDir + to_string(i);
-    //    if((file_out = fopen(path.c_str(),"wb+")) == NULL)
-    //    {
-    //        cout<< "[S3ORAM] File Cannot be Opened!!" <<endl;
-    //        exit(0);
-    //    }
-    //    for(int ii = 0 ; ii <DATA_CHUNKS; ii++)
-    //    {
-    //        fwrite(bucket[ii], 1, BUCKET_SIZE*sizeof(TYPE_DATA), file_out);
-    //    }
-    //    fclose(file_out);
-    //}
+    for(TYPE_INDEX i = 0 ; i < NUM_NODES/2; i ++)
+    {
+        file_out = NULL;
+        path = clientDataDir + to_string(i);
+        if((file_out = fopen(path.c_str(),"wb+")) == NULL)
+        {
+            cout<< "[S3ORAM] File Cannot be Opened!!" <<endl;
+            exit(0);
+        }
+        for(int ii = 0 ; ii <DATA_CHUNKS; ii++)
+        {
+            fwrite(bucket[ii], 1, BUCKET_SIZE*sizeof(TYPE_DATA), file_out);
+        }
+        fclose(file_out);
+    }
     
     cout << "[S3ORAM] There are " << NUM_NODES/2 << " leaf nodes, which is " << (NUM_NODES/2)*BUCKET_SIZE << " rows of data.\n";
     cout << "[S3ORAM] Combined, there are " << NUM_NODES<< " nodes, which is " << (NUM_NODES)*BUCKET_SIZE << " rows of data.\n";
     //generate random blocks in leaf-buckets
     TYPE_INDEX iter= 0;
-    for(TYPE_INDEX i = 0 ; i < NUM_NODES; i++)
+    for(TYPE_INDEX i = NUM_NODES/2 ; i < NUM_NODES; i++)
     {
         memset(bucket[0],0,sizeof(TYPE_DATA)*BUCKET_SIZE);
         memset(bucket[1],0,sizeof(TYPE_DATA)*BUCKET_SIZE);
