@@ -29,7 +29,9 @@ results in:
 
 [S3ORAM] Combined, there are 1023 nodes, which is 5000424 rows of data.
 
-Last data set: 114837, 2502528, 353299, 8351, 2
+Last data set: 2989959, 4999235, 350067, 102, 5
+
+And data key 4999235 can be confirmed to be at the 5000424th row of data via `cat allData.csv | grep -n "4999235,350067,102,5"`
 
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
