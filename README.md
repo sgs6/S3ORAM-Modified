@@ -1,5 +1,7 @@
 # S3ORAM-Modified
 
+Notice: The following config requires the stack limit to be increased. To confirm it works, the command `ulimit -s unlimited` was performed in the terminal to remove the soft limit.
+
 Current max config as follows:
 
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
