@@ -60,7 +60,7 @@ int S3ORAM::build(TYPE_POS_MAP* pos_map, TYPE_ID** metaData)
     
     //generate bucket ID pools
     vector<TYPE_ID> blockIDs;
-    for(TYPE_ID i = 0; i <NUM_BLOCK;i++)
+    for(TYPE_ID i = 0; i <BUCKET_SIZE * NUM_NODES;i++)
     {
         blockIDs.push_back(i+1);
     }
@@ -76,49 +76,63 @@ int S3ORAM::build(TYPE_POS_MAP* pos_map, TYPE_ID** metaData)
     }
     int iterate = 0; // number of chunks (number of cells in csv)
     int counter = 0; // number of rows
-    TYPE_DATA dataA[NUM_BLOCK],dataB[NUM_BLOCK],dataC[NUM_BLOCK],dataD[NUM_BLOCK];
+    int numData = BUCKET_SIZE * NUM_NODES;
+    TYPE_DATA dataA[numData],dataB[numData],dataC[numData],dataD[numData];
+    
     //cout << NUM_BLOCK << endl;
     while (getline(inFile, myString)) {
         std::stringstream ss(myString);
         while(getline(ss, myString, ',')){
-
-            if(iterate == 0){dataA[counter] = stoull(myString); pos_map[blockIDs[counter]].key = stoull(myString);}else 
-            if(iterate == 1){dataB[counter] = stoull(myString);}else
-            if(iterate == 2){dataC[counter] = stoull(myString);}else
-            if(iterate == 3){dataD[counter] = stoull(myString);}
+            //cout << iterate << endl;
+            if(iterate == 0){
+                dataA[counter] = stoull(myString); 
+                //cout << "pos before" << endl;
+                pos_map[blockIDs[counter]].key = stoull(myString);
+                //cout << "pos after" << endl;
+            }else if(iterate == 1){
+                dataB[counter] = stoull(myString);
+            }else if(iterate == 2){
+                dataC[counter] = stoull(myString);
+            }else if(iterate == 3){
+                dataD[counter] = stoull(myString);
+            }
             iterate++;
             if(iterate == 4){
                 iterate = 0;
                 counter++;
+                //cout << counter << " " << numData << endl;
             }
         }
-        if (counter >= NUM_BLOCK) {break;}
+        if (counter >= numData) {
+            //cout << "Something happened?" << endl;
+            break;
+        }
     }
     inFile.close();
     
     //non-leaf buckets are all empty
     cout << "[S3ORAM] There are " << (NUM_NODES/2) - 1 << " non-leaf nodes, which is " << ((NUM_NODES/2)-1)*BUCKET_SIZE << " rows of data.\n";
-    for(TYPE_INDEX i = 0 ; i < NUM_NODES/2; i ++)
-    {
-        file_out = NULL;
-        path = clientDataDir + to_string(i);
-        if((file_out = fopen(path.c_str(),"wb+")) == NULL)
-        {
-            cout<< "[S3ORAM] File Cannot be Opened!!" <<endl;
-            exit(0);
-        }
-        for(int ii = 0 ; ii <DATA_CHUNKS; ii++)
-        {
-            fwrite(bucket[ii], 1, BUCKET_SIZE*sizeof(TYPE_DATA), file_out);
-        }
-        fclose(file_out);
-    }
+    //for(TYPE_INDEX i = 0 ; i < NUM_NODES/2; i ++)
+    //{
+    //    file_out = NULL;
+    //    path = clientDataDir + to_string(i);
+    //    if((file_out = fopen(path.c_str(),"wb+")) == NULL)
+    //    {
+    //        cout<< "[S3ORAM] File Cannot be Opened!!" <<endl;
+    //        exit(0);
+    //    }
+    //    for(int ii = 0 ; ii <DATA_CHUNKS; ii++)
+    //    {
+    //        fwrite(bucket[ii], 1, BUCKET_SIZE*sizeof(TYPE_DATA), file_out);
+    //    }
+    //    fclose(file_out);
+    //}
     
     cout << "[S3ORAM] There are " << NUM_NODES/2 << " leaf nodes, which is " << (NUM_NODES/2)*BUCKET_SIZE << " rows of data.\n";
     cout << "[S3ORAM] Combined, there are " << NUM_NODES<< " nodes, which is " << (NUM_NODES)*BUCKET_SIZE << " rows of data.\n";
     //generate random blocks in leaf-buckets
     TYPE_INDEX iter= 0;
-    for(TYPE_INDEX i = NUM_NODES/2 ; i < NUM_NODES; i++)
+    for(TYPE_INDEX i = 0 ; i < NUM_NODES; i++)
     {
         memset(bucket[0],0,sizeof(TYPE_DATA)*BUCKET_SIZE);
         memset(bucket[1],0,sizeof(TYPE_DATA)*BUCKET_SIZE);
@@ -127,8 +141,10 @@ int S3ORAM::build(TYPE_POS_MAP* pos_map, TYPE_ID** metaData)
         memset(bucket[4],0,sizeof(TYPE_DATA)*BUCKET_SIZE);
         for(int ii = 0 ; ii<BUCKET_SIZE; ii++)
         {
-            if(iter>=NUM_BLOCK)
+            if(iter>=numData){
+                cout << "Last data set: " << bucket[0][ii] << ", " << bucket[1][ii] << ", " << bucket[2][ii] << ", " << bucket[3][ii] << ", " << bucket[4][ii]<< endl;
                 break;
+            }
             bucket[0][ii] = blockIDs[iter];
             bucket[1][ii] = dataA[(int)iter]; 
             bucket[2][ii] = dataB[(int)iter];
@@ -140,7 +156,7 @@ int S3ORAM::build(TYPE_POS_MAP* pos_map, TYPE_ID** metaData)
             
             iter++;
 
-            if(i == NUM_NODES - 1 && ii == BUCKET_SIZE - 1){
+            if(iter>=numData){
                 cout << "Last data set: " << bucket[0][ii] << ", " << bucket[1][ii] << ", " << bucket[2][ii] << ", " << bucket[3][ii] << ", " << bucket[4][ii]<< endl;
             }
             
