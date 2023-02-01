@@ -16,7 +16,7 @@ char ClientS3ORAM::timestamp[16];
 
 ClientS3ORAM::ClientS3ORAM()
 {
-	this->pos_map = new TYPE_POS_MAP[BUCKET_SIZE * NUM_NODES];
+	this->pos_map = new TYPE_POS_MAP[NUM_BLOCK+1];
     
     this->metaData = new TYPE_ID*[NUM_NODES];
 	for (int i = 0 ; i < NUM_NODES; i++)
@@ -153,14 +153,11 @@ int ClientS3ORAM::init()
 
     auto start = time_now;
     auto end = time_now;
-    int posMapSize = BUCKET_SIZE * NUM_NODES;
     cout << "Initializing position map" << endl;
-    for ( TYPE_INDEX i = 0 ; i <= posMapSize; i ++ )
+    for ( TYPE_INDEX i = 0 ; i <= NUM_BLOCK; i ++ )
     {
         this->pos_map[i].pathID = -1;
         this->pos_map[i].pathIdx = -1;
-        this->pos_map[i].key = -1;
-        //cout << i << endl;
     }
 
     start = time_now;
