@@ -1,5 +1,7 @@
 # S3ORAM-Modified
 
+Raw datasets and collected data: https://drive.google.com/drive/folders/1_qrGCbUQRMSC7BYypLIds0eLlEnWDhD2?usp=sharing
+
 Notice: The following config requires the stack limit to be increased. To confirm it works, the command `ulimit -s unlimited` was performed in the terminal to remove the soft limit.
 
 Notice, this amount of data, 3 sets 5 million rows of 5 columns and 1 set of 5 million rows and 2 columns requires 11 GB of memory.
