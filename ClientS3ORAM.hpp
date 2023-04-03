@@ -54,7 +54,7 @@ public:
     int init();
     int load();
     int access(TYPE_ID blockID);
-    int accessQuerry(long long int value);
+    int accessQuerry(long long int value, int firstValue);
     int sendORAMTree();
     
     //retrieval_vector

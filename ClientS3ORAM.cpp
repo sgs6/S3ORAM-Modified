@@ -16,7 +16,7 @@ char ClientS3ORAM::timestamp[16];
 
 ClientS3ORAM::ClientS3ORAM()
 {
-	this->pos_map = new TYPE_POS_MAP[NUM_BLOCK+1];
+	this->pos_map = new TYPE_POS_MAP[BUCKET_SIZE * NUM_NODES];
     
     this->metaData = new TYPE_ID*[NUM_NODES];
 	for (int i = 0 ; i < NUM_NODES; i++)
@@ -153,11 +153,15 @@ int ClientS3ORAM::init()
 
     auto start = time_now;
     auto end = time_now;
+    int posMapSize = BUCKET_SIZE * NUM_NODES;
     cout << "Initializing position map" << endl;
-    for ( TYPE_INDEX i = 0 ; i <= NUM_BLOCK; i ++ )
+    for ( TYPE_INDEX i = 0 ; i <= posMapSize; i ++ )
     {
         this->pos_map[i].pathID = -1;
         this->pos_map[i].pathIdx = -1;
+        this->pos_map[i].key = -1;
+        this->pos_map[i].numCases = -1;
+        //cout << i << endl;
     }
 
     start = time_now;
@@ -313,11 +317,21 @@ int ClientS3ORAM::sendORAMTree()
     return 0;
 }
 
-int ClientS3ORAM::accessQuerry(long long int value){
+int ClientS3ORAM::accessQuerry(long long int value, int firstValue){
     
     for(TYPE_ID i = 0; i < NUM_BLOCK; i++){
-        if (this->pos_map[i].key == value){
-            access(i);
+        if (firstValue == 1){
+            if (this->pos_map[i].key == value){
+                if(this->pos_map[i].numCases == 1){
+                    access(i);
+                    break;
+                }
+            }
+            else{
+                if (this->pos_map[i].key == value){
+                    access(i);
+                }
+            }
         }
     }
     
@@ -435,6 +449,7 @@ int ClientS3ORAM::access(TYPE_ID blockID)
     cout << recoveredBlock[0] << " == " << blockID << endl;
 
     cout << "	[ClientS3ORAM] Block-" << recoveredBlock[0] <<" is Retrieved" <<endl;
+    cout << "TEST\n";
     if (recoveredBlock[0] == blockID)
         cout << "	[ClientS3ORAM] SUCCESS!!!!!!" << endl;
     else
@@ -444,18 +459,21 @@ int ClientS3ORAM::access(TYPE_ID blockID)
 	
     
     // 6. update position map
-    
+    cout << "	[ClientS3ORAM] Update Postion Map";
     TYPE_INDEX fullPathIdx[H+1];
     ORAM.getFullPathIdx(fullPathIdx,pathID);
     this->metaData[fullPathIdx[pos_map[blockID].pathIdx / BUCKET_SIZE ]][pos_map[blockID].pathIdx % BUCKET_SIZE] = 0;
     
     // 6.1. assign to random path
+    cout << "	[ClientS3ORAM] Assign Random Path";
+
     pos_map[blockID].pathID = Utils::RandBound(N_leaf)+(N_leaf-1);
     pos_map[blockID].pathIdx = numRead;
     this->metaData[0][numRead] = blockID;
     
     
     // 7. create new shares for the retrived block, 
+    cout << "	[ClientS3ORAM] Create New Shares";
     TYPE_DATA chunkShares[NUM_SERVERS];
     
     for(int u = 0 ; u < DATA_CHUNKS; u++ )
@@ -472,6 +490,8 @@ int ClientS3ORAM::access(TYPE_ID blockID)
         memcpy(&block_buffer_out[k][DATA_CHUNKS*sizeof(TYPE_DATA)], &numRead, sizeof(TYPE_DATA));
     }
 	// 8. upload the share to numRead-th slot in root bucket
+    cout << "	[ClientS3ORAM] Upload Shares";
+
     for(TYPE_INDEX k = 0; k < NUM_SERVERS; k++) 
     {
 //		thread_args[k] = struct_socket(SERVER_ADDR[k]+ ":" + SERVER_PORT[k*NUM_SERVERS+k], block_buffer_out[k], sizeof(TYPE_DATA)*DATA_CHUNKS+sizeof(TYPE_INDEX), NULL, 0, CMD_SEND_BLOCK,NULL);

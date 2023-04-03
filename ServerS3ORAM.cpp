@@ -837,7 +837,7 @@ void* ServerS3ORAM::thread_loadRetrievalData_func(void* args)
         file_in = NULL;
         path = rootPath + to_string(opt->serverNo) + "/" + to_string(opt->fullPathIdx[i]);
         if((file_in = fopen(path.c_str(),"rb")) == NULL){
-            cout<< "	[SendBlock] File cannot be opened!!" <<endl;
+            cout<< "	[SendBlock] File " << path << "cannot be opened!!" <<endl;
             exit;
         }
         fseek(file_in,BUCKET_SIZE*(opt->startIdx)*sizeof(TYPE_DATA),SEEK_SET);

@@ -38,9 +38,9 @@ static inline std::string to_string(T value)
 #define NTL_LIB //disable it if compiled for android
 //=== PARAMETERS ============================================================
 #define BLOCK_SIZE 40
-#define HEIGHT 12
-#define BUCKET_SIZE 248
-#define EVICT_RATE 124
+#define HEIGHT 9
+#define BUCKET_SIZE 4000//4888
+#define EVICT_RATE 2000//2444
 const int H = HEIGHT; 
 
 static const unsigned long long P = 1073742353; //prime field - should have length equal to the defined TYPE_DATA
@@ -68,7 +68,8 @@ const long long int vandermonde[NUM_SERVERS] = {3 , -3 + P, 1};
 //=== SERVER INFO ============================================================
 
 	//SERVER IP ADDRESSES
-const std::string SERVER_ADDR[NUM_SERVERS] = {"tcp://localhost", "tcp://localhost", "tcp://localhost"}; 	
+//const std::string SERVER_ADDR[NUM_SERVERS] = {"tcp://localhost", "tcp://localhost", "tcp://localhost"}; 	
+const std::string SERVER_ADDR[NUM_SERVERS] = {"tcp://10.42.0.1", "tcp://10.42.0.1", "tcp://10.42.0.1"}; 	
 // const std::string SERVER_ADDR[NUM_SERVERS] = {"tcp://localhost", "tcp://localhost", "tcp://localhost", "tcp://localhost", "tcp://localhost", "tcp://localhost", "tcp://localhost"}; 	
 #define SERVER_PORT 5555        //define the first port to generate incremental ports for client-server /server-server communications
 
@@ -113,6 +114,7 @@ typedef struct type_pos_map
 	TYPE_INDEX pathID;
 	TYPE_INDEX pathIdx;
     long long int key;
+    long long int numCases;
 }TYPE_POS_MAP;
 
 

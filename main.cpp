@@ -3,6 +3,10 @@
 #include "ServerS3ORAM.hpp"
 #include "config.h"
 #include "Utils.hpp"
+#include<fstream>
+#include<time.h>
+#include<vector>
+#include<string>
 
 using namespace std;
 
@@ -115,7 +119,7 @@ int main(int argc, char **argv)
 				cout << "[main] Sequential Access for " << j << " IS STARTING!" <<endl;
 				cout << "=================================================================" << endl;
 				
-				client->access(j);
+				client->accessQuerry(j, 1);
 				cout << "=================================================================" << endl;
 				cout << "[main] Sequential Access for " << j << " IS COMPLETED!" <<endl;
 				cout << "=================================================================" << endl;
@@ -146,17 +150,43 @@ int main(int argc, char **argv)
 			cout << "HOW MANY RANDOM ACCESS?";
 			cin >> access;
 			
+			string line;
+			
+			//cout << "A1" << endl;
+
 			auto st = time_now;
 			for(int j = 1 ; j <= access; j++)
 			{
-				random_access = rand() % NUM_BLOCK + 1; 
+				//625313 
+    			int maxLine = 12759; // Need to run program first, get the max value generated for config, then recompile with max values line number.
+				//cout << "A2" << endl;
+				int ranNum = rand() % maxLine + 1;
+				//cout << "B" << endl;
+
+				ifstream file("../columnA.txt"); // Generated via "cat allData.csv | cut -f1 -d, > columnA.txt"
+				int lineNum = 0;
+				while(getline(file,line))
+    			{
+					//cout << lineNum << endl;
+
+					if( lineNum == ranNum ){
+						//cout << "C" << endl;
+
+						random_access = stoi(line);
+						//cout << "D" << endl;
+
+						break;
+					}
+    				lineNum++;
+  				}
+
 				cout << endl;
 				cout << "=================================================================" << endl;
 				cout << "[main] Random Access for " << random_access << " IS STARTING!" <<endl;
 				cout << "=================================================================" << endl;
 				
 				
-				client->access(random_access);
+				client->accessQuerry(random_access, 1);
 				
 				cout << "=================================================================" << endl;
 				cout << "[main] Random Access for " << random_access << " IS COMPLETED!" <<endl;
@@ -192,7 +222,7 @@ int main(int argc, char **argv)
 			cout << "[main] Key Access for " << access << " IS STARTING!" <<endl;
 			cout << "=================================================================" << endl;
 
-			client->accessQuerry(querry);
+			client->accessQuerry(querry, 0);
 			
 			cout << "=================================================================" << endl;
 			cout << "[main] Key Access for " << access << " IS COMPLETED!" <<endl;
